@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Rifa Online</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  color: #fff;
+  text-align: center;
+  background: linear-gradient(120deg, #0f172a, #1e293b, #0f766e);
+  background-size: 300% 300%;
+  animation: bg 12s ease infinite;
+}
+
+@keyframes bg {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+}
+
+h2 {
+  text-shadow: 0 0 12px #38bdf8;
+}
+
+.card {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 15px;
+  margin-top: 15px;
+}
+
+.seats {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 6px;
+  margin-top: 20px;
+}
+
+.seat {
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  background: rgba(255,255,255,0.08);
+  transition: 0.2s;
+}
+
+.seat:hover {
+  transform: scale(1.1);
+  background: #22c55e;
+  color: #000;
+}
+
+.sold {
+  background: #ef4444 !important;
+  color: #fff;
+}
+
+button {
+  padding: 10px 15px;
+  margin: 5px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:nth-child(1){background:#3b82f6;}
+button:nth-child(2){background:#f59e0b;}
+button:nth-child(3){background:#a855f7;}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>🎟️ RIFA ONLINE</h2>
+
+<div class="card">
+<p>🏆 1° Prêmio: R$300,00 no Pix</p>
+<p>🏆 2° Prêmio: 3 passagens passeio para Marudá 23/08/2026 </p>
+<p>🏆 3° Prêmio: R$150,00 no Pix</p>
+<p>💰 Valor: R$10 por número</p>
+<p>🎉 Promoção: 3 números por R$25</p>
+</div>
+
+<div class="seats" id="seats"></div>
+
+<div class="card">
+
+<h3>Controle da Rifa</h3>
+
+<button onclick="sortear()">🎲 Sortear</button>
+
+<button onclick="compartilharLivres()">
+🔥 Números livres 📤
+</button>
+
+<button onclick="mostrarVendidos()">📋 Números vendidos</button>
+
+</div>
+
+</div>
+
+<script>
+
+let seats = Array(250).fill(null);
+
+// RENDER
+function render(){
+
+  const container = document.getElementById("seats");
+  container.innerHTML = "";
+
+  seats.forEach((s,i)=>{
+
+    const div = document.createElement("div");
+    div.className = "seat " + (s ? "sold" : "");
+    div.innerText = i+1;
+
+    div.onclick = () => {
+
+      if (s) {
+
+        let nome = s;
+
+        let numeros = seats
+          .map((val, idx) => val === nome ? idx+1 : null)
+          .filter(Boolean);
+
+        let msg = "🎟️ COMPROVANTE DE COMPRA\n\n";
+        msg += `👤 Comprador: ${nome}\n\n`;
+        msg += "🙏 Obrigado pela sua compra!\n\n";
+        msg += "🔢 Seus números:\n";
+        msg += `${numeros.join(", ")}\n\n`;
+        msg += "🍀 Boa sorte!\n\n";
+        msg += "💳 PIX:\nneto.csn@gmail.com\nCícero Sabino da Costa Neto\nBanco: Next - Bradesco";
+
+        if (confirm("📤 Enviar comprovante no WhatsApp?")) {
+          window.open(
+            `https://wa.me/?text=${encodeURIComponent(msg)}`,
+            "_blank"
+          );
+        }
+
+        return;
+      }
+
+      let name = prompt("Nome do comprador:");
+      if (!name) return;
+
+      seats[i] = name;
+
+      alert(`🎉 Número ${i+1} comprado!`);
+
+      render();
+    };
+
+    container.appendChild(div);
+  });
+}
+
+// SORTEIO
+function sortear(){
+  let vendidos = seats.map((s,i)=>s?i+1:null).filter(Boolean);
+
+  if(!vendidos.length) return alert("Nenhum vendido");
+
+  let ganhador = vendidos[Math.floor(Math.random()*vendidos.length)];
+
+  alert("🎉 Sorteado: " + ganhador);
+}
+
+// 🔥 MENSAGEM ATUALIZADA (FOCO EM VENDAS)
+function compartilharLivres(){
+
+  let livres = seats.map((s,i)=>!s?i+1:null).filter(Boolean);
+
+  let msg = "";
+
+  msg += "🔥🔥 OPORTUNIDADE IMPERDÍVEL! 🔥🔥\n\n";
+  msg += "🎟️ RIFA ONLINE COM PRÊMIOS INCRÍVEIS\n";
+  msg += "🏆 1° prêmio: R$300,00 no Pix\n";
+  msg += "🏆 2° prêmio: R$3 passagens passeio para Marudá 23/08/2026\n";
+  msg += "🏆 3° prêmio: R$R$150,00 no Pix\n\n"
+
+  msg += "⚠️ ÚLTIMAS VAGAS DISPONÍVEIS!\n";
+  msg += "💰 Apenas R$10 por número\n";
+  msg += "🎉 Promoção: 3 números por R$25\n\n";
+
+  msg += "📲 GARANTA O SEU AGORA!\n";
+  msg += "WhatsApp: 91 98101-8269\n\n";
+
+  msg += "🔢 NÚMEROS LIVRES:\n";
+  msg += livres.join(", ");
+
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+}
+
+// VENDIDOS
+function mostrarVendidos(){
+
+  let vendidos = seats
+    .map((s,i)=> s ? `🔢 ${i+1} → 👤 ${s}` : null)
+    .filter(Boolean);
+
+  if(vendidos.length === 0){
+    alert("Nenhum número vendido ainda.");
+    return;
+  }
+
+  alert("📋 NÚMEROS VENDIDOS:\n\n" + vendidos.join("\n"));
+}
+
+render();
+
+</script>
+
+</body>
+</html>
