@@ -5,79 +5,57 @@
 <title>Rifa Online</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  color: #fff;
-  text-align: center;
-  background: linear-gradient(120deg, #0f172a, #1e293b, #0f766e);
-  background-size: 300% 300%;
-  animation: bg 12s ease infinite;
+body{
+  margin:0;
+  font-family:Arial;
+  color:#fff;
+  text-align:center;
+  background:linear-gradient(120deg,#ff4ecd,#4cc9f0,#0f172a);
+  background-size:400% 400%;
+  animation:bg 10s ease infinite;
 }
 
-@keyframes bg {
-  0% {background-position: 0% 50%;}
-  50% {background-position: 100% 50%;}
-  100% {background-position: 0% 50%;}
+@keyframes bg{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
 
-.container {
-  max-width: 1000px;
-  margin: auto;
-  padding: 20px;
+.container{max-width:1000px;margin:auto;padding:20px;}
+
+.card{
+  background:rgba(0,0,0,0.45);
+  padding:15px;
+  border-radius:12px;
+  margin-top:15px;
 }
 
-h2 {
-  text-shadow: 0 0 12px #38bdf8;
+.seats{
+  display:grid;
+  grid-template-columns:repeat(10,1fr);
+  gap:6px;
+  margin-top:20px;
 }
 
-.card {
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(10px);
-  border-radius: 15px;
-  padding: 15px;
-  margin-top: 15px;
+.seat{
+  padding:10px;
+  background:rgba(255,255,255,0.12);
+  border-radius:8px;
+  cursor:pointer;
+  font-size:12px;
 }
 
-.seats {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 6px;
-  margin-top: 20px;
+.sold{background:#ef4444 !important;}
+
+button{
+  padding:10px;
+  margin:5px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
 }
 
-.seat {
-  padding: 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 12px;
-  background: rgba(255,255,255,0.08);
-  transition: 0.2s;
-}
-
-.seat:hover {
-  transform: scale(1.1);
-  background: #22c55e;
-  color: #000;
-}
-
-.sold {
-  background: #ef4444 !important;
-  color: #fff;
-}
-
-button {
-  padding: 10px 15px;
-  margin: 5px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-button:nth-child(1){background:#3b82f6;}
-button:nth-child(2){background:#f59e0b;}
-button:nth-child(3){background:#a855f7;}
+#formBox{display:none;}
 </style>
 </head>
 
@@ -89,20 +67,58 @@ button:nth-child(3){background:#a855f7;}
 
 <div class="card">
 <p>🏆 1° Prêmio: R$300 no Pix</p>
-<p>🏆 2° Prêmio: 3 passagens para Marudá (23/08/2026)</p>
-<p>🏆 3° Prêmio: R$150 no Pix</p>
-<p>💰 Valor: R$10 por número</p>
-<p>🎉 Promoção: 3 números por R$25</p>
+<p>🏆 2°Prêmio: 3 passagens passeio dia 23/08/2026 para Marudá </p>
+<p>🏆 3°Prêmio: R$150 no Pix</p>
+<p>💰 1 número = R$10 | 3 números = R$25</p>
 </div>
 
 <div class="seats" id="seats"></div>
 
-<div class="card">
-<h3>Controle da Rifa</h3>
+<div class="card" id="formBox">
+<h3>Finalizar Compra</h3>
+<p id="numeroInfo"></p>
+<input id="nome" placeholder="Nome"><br>
+<input id="telefone" placeholder="WhatsApp (somente números)" inputmode="numeric"><br>
+<button onclick="enviarWhatsApp()">WhatsApp</button>
+</div>
 
-<button onclick="sortear()">🎲 Sortear</button>
-<button onclick="compartilharLivres()">🔥 Divulgar</button>
-<button onclick="mostrarVendidos()">📋 Vendidos</button>
+</div>
+
+<!-- BOTÃO ADMIN -->
+<button onclick="abrirAdmin()"
+style="position:fixed;bottom:10px;right:10px;width:40px;height:40px;border-radius:50%;opacity:0.3;">
+⚙️
+</button>
+
+<!-- ADMIN -->
+<div id="adminBox" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#000;color:#fff;">
+
+<h2>ADMIN</h2>
+
+<div id="loginBox">
+  <input id="senha" placeholder="Senha">
+  <button onclick="loginAdmin()">Entrar</button>
+</div>
+
+<div id="adminMenu" style="display:none;">
+  <button onclick="abrirSortear()">🎲 Sortear</button>
+  <button onclick="abrirCancelar()">❌ Cancelar Número</button>
+  <button onclick="sairAdmin()">🚪 Sair</button>
+</div>
+
+<div id="abaSortear" style="display:none;">
+<h3>🎲 Sorteio</h3>
+<button onclick="sortear()">Sortear</button>
+<hr>
+<div id="resumoBox"></div>
+<button onclick="voltarMenu()">🔙 Voltar</button>
+</div>
+
+<div id="abaCancelar" style="display:none;">
+<h3>❌ Cancelar Número</h3>
+<input id="num" placeholder="Número">
+<button onclick="cancelar()">Remover</button>
+<button onclick="voltarMenu()">🔙 Voltar</button>
 </div>
 
 </div>
@@ -110,124 +126,213 @@ button:nth-child(3){background:#a855f7;}
 <script>
 
 const TOTAL = 250;
+
 let seats = [];
+let selecionados = [];
+let ganhadores = [];
+let premioIndex = 0;
 
-// 🔥 CARREGAR DADOS SALVOS
-function loadData(){
-  const saved = localStorage.getItem("rifa_seats");
-  if(saved){
-    seats = JSON.parse(saved);
-  } else {
-    seats = Array(TOTAL).fill(null);
-  }
+/* LOAD */
+function load(){
+  seats = JSON.parse(localStorage.getItem("rifa")) || Array(TOTAL).fill(null);
 }
 
-// 💾 SALVAR
-function saveData(){
-  localStorage.setItem("rifa_seats", JSON.stringify(seats));
+function save(){
+  localStorage.setItem("rifa", JSON.stringify(seats));
 }
 
-// RENDER
+/* RENDER */
 function render(){
-  const container = document.getElementById("seats");
-  container.innerHTML = "";
+  const c = document.getElementById("seats");
+  c.innerHTML = "";
 
-  seats.forEach((s, i) => {
+  seats.forEach((s,i)=>{
 
-    const div = document.createElement("div");
-    div.className = "seat " + (s ? "sold" : "");
-    div.innerText = i + 1;
+    const d = document.createElement("div");
+    d.className = "seat " + (s ? "sold" : "");
+    d.innerText = i+1;
 
-    div.onclick = () => {
+    d.onclick = ()=>{
 
-      // SE JÁ VENDIDO → COMPROVANTE
-      if (s) {
+      if(s) return alert("Já vendido");
 
-        let nome = s;
+      const n = i+1;
 
-        let numeros = seats
-          .map((val, idx) => val === nome ? idx + 1 : null)
-          .filter(Boolean);
-
-        let msg = "🎟️ COMPROVANTE DE COMPRA\n\n";
-        msg += `👤 Nome: ${nome}\n`;
-        msg += "🔢 Números: " + numeros.join(", ") + "\n\n";
-        msg += "💳 PIX:\nneto.csn@gmail.com\nCícero Sabino da Costa Neto\nBanco: Next";
-
-        if (confirm("📤 Enviar comprovante no WhatsApp?")) {
-          window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
-        }
-
-        return;
+      if(selecionados.includes(n)){
+        selecionados = selecionados.filter(x=>x!==n);
+      } else {
+        if(selecionados.length>=3) return alert("Máximo 3 números");
+        selecionados.push(n);
       }
 
-      // COMPRA
-      let name = prompt("Digite seu nome:");
-      if (!name) return;
-
-      seats[i] = name;
-
-      saveData(); // 🔥 SALVA AQUI
-
-      alert(`✅ Número ${i + 1} reservado!`);
+      document.getElementById("numeroInfo").innerText = selecionados.join(",");
+      document.getElementById("formBox").style.display = selecionados.length ? "block" : "none";
 
       render();
     };
 
-    container.appendChild(div);
+    c.appendChild(d);
   });
 }
 
-// 🎲 SORTEIO
+/* 💬 WHATSAPP FINAL */
+function enviarWhatsApp(){
+
+  const nome = document.getElementById("nome").value;
+  let telefone = document.getElementById("telefone").value;
+
+  telefone = telefone.replace(/\D/g, "");
+
+  if(!nome || !telefone) return alert("Preencha corretamente");
+
+  selecionados.forEach(n=>{
+    seats[n-1] = {nome, telefone};
+  });
+
+  save();
+
+  let valor = selecionados.length===3?25:selecionados.length===2?20:10;
+
+  let msg = 
+`🎟️ COMPRA CONFIRMADA
+
+👤 Nome: ${nome}
+📱 Telefone: ${telefone}
+🔢 Números: ${selecionados.join(", ")}
+💰 Valor: R$ ${valor}
+
+⚠️ NOSSA CHAVE PIX
+💳 PIX: neto.csn@gmail.com
+👤 Destinatário: Cícero Sabino da costa neto
+🏦 Banco: Next / Bradesco
+
+⚠️ Pagamento obrigatório no ato
+⚠️ Envie o comprovante
+⚠️ Caso não identifiquemos o pagamento, cancelaremos o número escolhido
+❌ Sem devolução de valores por desistência ou insatisfação`;
+
+  window.open("https://wa.me/5591981018269?text=" + encodeURIComponent(msg));
+
+  selecionados = [];
+  render();
+  document.getElementById("formBox").style.display = "none";
+}
+
+/* ADMIN */
+function abrirAdmin(){
+
+  document.getElementById("adminBox").style.display="block";
+
+  document.getElementById("loginBox").style.display="block";
+  document.getElementById("adminMenu").style.display="none";
+  document.getElementById("abaSortear").style.display="none";
+  document.getElementById("abaCancelar").style.display="none";
+
+  document.getElementById("senha").value="";
+}
+
+function loginAdmin(){
+
+  if(document.getElementById("senha").value==="2308"){
+    document.getElementById("loginBox").style.display="none";
+    document.getElementById("adminMenu").style.display="block";
+  } else {
+    alert("Senha incorreta");
+  }
+}
+
+function abrirSortear(){
+  document.getElementById("adminMenu").style.display="none";
+  document.getElementById("abaSortear").style.display="block";
+  atualizarResumo();
+}
+
+function abrirCancelar(){
+  document.getElementById("adminMenu").style.display="none";
+  document.getElementById("abaCancelar").style.display="block";
+}
+
+function voltarMenu(){
+  document.getElementById("abaSortear").style.display="none";
+  document.getElementById("abaCancelar").style.display="none";
+  document.getElementById("adminMenu").style.display="block";
+}
+
+function sairAdmin(){
+  location.reload();
+}
+
+/* SORT */
 function sortear(){
-  let vendidos = seats
+
+  const premios = [
+    "🥉 3º Prêmio: R$150 no Pix",
+    "🥈 2º Prêmio: 3 passagens passeio dia 23/08/2026 para Marudá ",
+    "🥇 1º Prêmio: R$300 no Pix"
+  ];
+
+  const vendidos = seats
     .map((s,i)=> s ? i+1 : null)
     .filter(Boolean);
 
-  if(!vendidos.length){
-    alert("Nenhum número vendido.");
+  if(!vendidos.length) return alert("Nenhum vendido");
+  if(premioIndex>=3) return alert("Fim dos prêmios");
+
+  const numero = vendidos[Math.floor(Math.random()*vendidos.length)];
+  const dados = seats[numero-1];
+
+  ganhadores.push({
+    premio: premios[premioIndex],
+    numero,
+    nome: dados?.nome || "Não identificado",
+    telefone: dados?.telefone || "Não informado"
+  });
+
+  premioIndex++;
+
+  atualizarResumo();
+}
+
+/* RESUMO */
+function atualizarResumo(){
+
+  const box = document.getElementById("resumoBox");
+  box.innerHTML = "";
+
+  if(ganhadores.length===0){
+    box.innerHTML="Nenhum ganhador ainda";
     return;
   }
 
-  let ganhador = vendidos[Math.floor(Math.random() * vendidos.length)];
+  [...ganhadores].reverse().forEach(g=>{
 
-  alert("🎉 Número sorteado: " + ganhador);
+    box.innerHTML += `
+      <div style="margin:10px;padding:12px;background:rgba(255,255,255,0.1);border-radius:10px;">
+        <h3>${g.premio}</h3>
+        <div style="font-size:30px;color:#00ffcc;font-weight:bold;">🔢 ${g.numero}</div>
+        <p>👤 ${g.nome}</p>
+        <p>📱 ${g.telefone}</p>
+      </div>
+    `;
+  });
 }
 
-// 🔥 DIVULGAÇÃO
-function compartilharLivres(){
+/* CANCELAR */
+function cancelar(){
 
-  let livres = seats
-    .map((s,i)=> !s ? i+1 : null)
-    .filter(Boolean);
+  const n = parseInt(document.getElementById("num").value);
 
-  let msg = "🔥 RIFA ONLINE ABERTA 🔥\n\n";
-  msg += "🏆 Prêmios incríveis\n";
-  msg += "💰 Apenas R$10 por número\n";
-  msg += "🎉 3 por R$25\n\n";
-  msg += "📲 WhatsApp: 91 98101-8269\n\n";
-  msg += "🔢 Números livres:\n" + livres.join(", ");
+  if(!n || n<1 || n>TOTAL) return alert("Inválido");
 
-  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+  seats[n-1]=null;
+  save();
+  render();
+
+  alert("Cancelado");
 }
 
-// 📋 VENDIDOS
-function mostrarVendidos(){
-
-  let vendidos = seats
-    .map((s,i)=> s ? `🔢 ${i+1} → ${s}` : null)
-    .filter(Boolean);
-
-  if(!vendidos.length){
-    alert("Nenhum número vendido.");
-    return;
-  }
-
-  alert("📋 VENDIDOS:\n\n" + vendidos.join("\n"));
-}
-
-// INIT
-loadData();
+/* START */
+load();
 render();
 
 </script>
