@@ -7,7 +7,7 @@
 <style>
 body {
   margin: 0;
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   color: #fff;
   text-align: center;
   background: linear-gradient(120deg, #0f172a, #1e293b, #0f766e);
@@ -88,9 +88,9 @@ button:nth-child(3){background:#a855f7;}
 <h2>🎟️ RIFA ONLINE</h2>
 
 <div class="card">
-<p>🏆 1° Prêmio: R$300,00 no Pix</p>
-<p>🏆 2° Prêmio: 3 passagens passeio para Marudá 23/08/2026 </p>
-<p>🏆 3° Prêmio: R$150,00 no Pix</p>
+<p>🏆 1° Prêmio: R$300 no Pix</p>
+<p>🏆 2° Prêmio: 3 passagens para Marudá (23/08/2026)</p>
+<p>🏆 3° Prêmio: R$150 no Pix</p>
 <p>💰 Valor: R$10 por número</p>
 <p>🎉 Promoção: 3 números por R$25</p>
 </div>
@@ -98,71 +98,78 @@ button:nth-child(3){background:#a855f7;}
 <div class="seats" id="seats"></div>
 
 <div class="card">
-
 <h3>Controle da Rifa</h3>
 
 <button onclick="sortear()">🎲 Sortear</button>
-
-<button onclick="compartilharLivres()">
-🔥 Números livres 📤
-</button>
-
-<button onclick="mostrarVendidos()">📋 Números vendidos</button>
-
+<button onclick="compartilharLivres()">🔥 Divulgar</button>
+<button onclick="mostrarVendidos()">📋 Vendidos</button>
 </div>
 
 </div>
 
 <script>
 
-let seats = Array(250).fill(null);
+const TOTAL = 250;
+let seats = [];
+
+// 🔥 CARREGAR DADOS SALVOS
+function loadData(){
+  const saved = localStorage.getItem("rifa_seats");
+  if(saved){
+    seats = JSON.parse(saved);
+  } else {
+    seats = Array(TOTAL).fill(null);
+  }
+}
+
+// 💾 SALVAR
+function saveData(){
+  localStorage.setItem("rifa_seats", JSON.stringify(seats));
+}
 
 // RENDER
 function render(){
-
   const container = document.getElementById("seats");
   container.innerHTML = "";
 
-  seats.forEach((s,i)=>{
+  seats.forEach((s, i) => {
 
     const div = document.createElement("div");
     div.className = "seat " + (s ? "sold" : "");
-    div.innerText = i+1;
+    div.innerText = i + 1;
 
     div.onclick = () => {
 
+      // SE JÁ VENDIDO → COMPROVANTE
       if (s) {
 
         let nome = s;
 
         let numeros = seats
-          .map((val, idx) => val === nome ? idx+1 : null)
+          .map((val, idx) => val === nome ? idx + 1 : null)
           .filter(Boolean);
 
         let msg = "🎟️ COMPROVANTE DE COMPRA\n\n";
-        msg += `👤 Comprador: ${nome}\n\n`;
-        msg += "🙏 Obrigado pela sua compra!\n\n";
-        msg += "🔢 Seus números:\n";
-        msg += `${numeros.join(", ")}\n\n`;
-        msg += "🍀 Boa sorte!\n\n";
-        msg += "💳 PIX:\nneto.csn@gmail.com\nCícero Sabino da Costa Neto\nBanco: Next - Bradesco";
+        msg += `👤 Nome: ${nome}\n`;
+        msg += "🔢 Números: " + numeros.join(", ") + "\n\n";
+        msg += "💳 PIX:\nneto.csn@gmail.com\nCícero Sabino da Costa Neto\nBanco: Next";
 
         if (confirm("📤 Enviar comprovante no WhatsApp?")) {
-          window.open(
-            `https://wa.me/?text=${encodeURIComponent(msg)}`,
-            "_blank"
-          );
+          window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
         }
 
         return;
       }
 
-      let name = prompt("Nome do comprador:");
+      // COMPRA
+      let name = prompt("Digite seu nome:");
       if (!name) return;
 
       seats[i] = name;
 
-      alert(`🎉 Número ${i+1} comprado!`);
+      saveData(); // 🔥 SALVA AQUI
+
+      alert(`✅ Número ${i + 1} reservado!`);
 
       render();
     };
@@ -171,58 +178,56 @@ function render(){
   });
 }
 
-// SORTEIO
+// 🎲 SORTEIO
 function sortear(){
-  let vendidos = seats.map((s,i)=>s?i+1:null).filter(Boolean);
+  let vendidos = seats
+    .map((s,i)=> s ? i+1 : null)
+    .filter(Boolean);
 
-  if(!vendidos.length) return alert("Nenhum vendido");
+  if(!vendidos.length){
+    alert("Nenhum número vendido.");
+    return;
+  }
 
-  let ganhador = vendidos[Math.floor(Math.random()*vendidos.length)];
+  let ganhador = vendidos[Math.floor(Math.random() * vendidos.length)];
 
-  alert("🎉 Sorteado: " + ganhador);
+  alert("🎉 Número sorteado: " + ganhador);
 }
 
-// 🔥 MENSAGEM ATUALIZADA (FOCO EM VENDAS)
+// 🔥 DIVULGAÇÃO
 function compartilharLivres(){
 
-  let livres = seats.map((s,i)=>!s?i+1:null).filter(Boolean);
+  let livres = seats
+    .map((s,i)=> !s ? i+1 : null)
+    .filter(Boolean);
 
-  let msg = "";
-
-  msg += "🔥🔥 OPORTUNIDADE IMPERDÍVEL! 🔥🔥\n\n";
-  msg += "🎟️ RIFA ONLINE COM PRÊMIOS INCRÍVEIS\n";
-  msg += "🏆 1° prêmio: R$300,00 no Pix\n";
-  msg += "🏆 2° prêmio: R$3 passagens passeio para Marudá 23/08/2026\n";
-  msg += "🏆 3° prêmio: R$R$150,00 no Pix\n\n"
-
-  msg += "⚠️ ÚLTIMAS VAGAS DISPONÍVEIS!\n";
+  let msg = "🔥 RIFA ONLINE ABERTA 🔥\n\n";
+  msg += "🏆 Prêmios incríveis\n";
   msg += "💰 Apenas R$10 por número\n";
-  msg += "🎉 Promoção: 3 números por R$25\n\n";
-
-  msg += "📲 GARANTA O SEU AGORA!\n";
-  msg += "WhatsApp: 91 98101-8269\n\n";
-
-  msg += "🔢 NÚMEROS LIVRES:\n";
-  msg += livres.join(", ");
+  msg += "🎉 3 por R$25\n\n";
+  msg += "📲 WhatsApp: 91 98101-8269\n\n";
+  msg += "🔢 Números livres:\n" + livres.join(", ");
 
   window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
 }
 
-// VENDIDOS
+// 📋 VENDIDOS
 function mostrarVendidos(){
 
   let vendidos = seats
-    .map((s,i)=> s ? `🔢 ${i+1} → 👤 ${s}` : null)
+    .map((s,i)=> s ? `🔢 ${i+1} → ${s}` : null)
     .filter(Boolean);
 
-  if(vendidos.length === 0){
-    alert("Nenhum número vendido ainda.");
+  if(!vendidos.length){
+    alert("Nenhum número vendido.");
     return;
   }
 
-  alert("📋 NÚMEROS VENDIDOS:\n\n" + vendidos.join("\n"));
+  alert("📋 VENDIDOS:\n\n" + vendidos.join("\n"));
 }
 
+// INIT
+loadData();
 render();
 
 </script>
